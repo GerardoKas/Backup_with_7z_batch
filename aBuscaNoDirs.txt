@@ -1,0 +1,7 @@
+\\$RECYCLE.BIN
+\\System Volume Information
+\\TEMP
+%TEMP%
+%TMP%
+D\:\\_RESCUED
+D\:\\SoftwareOk

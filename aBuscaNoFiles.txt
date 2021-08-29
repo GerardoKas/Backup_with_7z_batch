@@ -1,0 +1,11 @@
+\.dat$
+\.zip$
+\.7z$
+\.rar$
+\.tmp$
+\.mpg$
+\.avi$
+\.dll$
+\.mp3$
+\.mkv$
+\.lrc$
