@@ -1,0 +1,104 @@
+Realiza el procesamiento condicional de los programas por lotes.
+
+IF [NOT] ERRORLEVEL n£mero comando
+IF [NOT] cadena1==cadena2 comando
+IF [NOT] EXIST archivo comando
+
+  NOT               Especifica que Windows debe llevar a cabo el comando solo
+                    si la condici¢n es falsa.
+
+  ERRORLEVEL n£mero Especifica una condici¢n verdadera si el £ltimo programa
+                    que se ejecut¢ devolvi¢ un c¢digo de salida igual o mayor
+                    que el n£mero especificado.
+
+  cadena1==cadena2  Especifica una condici¢n verdadera si las cadenas de 
+                    texto especificadas coinciden.
+
+  EXIST archivo     Especifica una condici¢n verdadera si el archivo 
+                    especificado existe.
+
+  comando           Especifica el comando que se va a ejecutar si se cumple la 
+                    condici¢n. Comando puede ir seguido de la palabra clave
+                    ELSE, que ejecutar  el comando tras las palabra clave ELSE
+                    si la condici¢n especificada es FALSE.
+
+La cl usula ELSE debe aparecer en la misma l¡nea que la del comando que 
+sigue a IF  Por ejemplo:
+
+    IF EXIST archivo. (
+        del archivo.
+    ) ELSE (
+        echo archivo. no existente.
+    )
+
+Lo siguiente NO funcionar  porque el comando del debe terminar con una 
+nueva l¡nea:
+
+    IF EXIST archivo. del archivo. ELSE echo archivo. no existente
+
+Tampoco funcionar¡a lo siguiente, ya que el comando ELSE debe estar en la 
+misma l¡nea que el comando IF:
+
+    IF EXIST archivo. del archivo.
+    ELSE echo archivo. no existente
+
+Si desea mantenerlo todo en una misma l¡nea, lo siguiente funcionar¡a:
+
+    IF EXIST archivo. (del archivo.) ELSE echo archivo. no existente
+
+Si los comandos de extensi¢n est n habilitados, IF cambia as¡:
+
+    IF [/I] cadena1 op-de-comparaci¢n cadena2 comando
+    IF CMDEXTVERSION n£mero comando
+    IF DEFINED variable comando
+
+donde op-de-comparaci¢n puede ser:
+
+    EQU - igual
+    NEQ - no igual
+    LSS - menor que
+    LEQ - menor que o igual
+    GTR - mayor que
+    GEQ - mayor que o igual
+
+y el modificador /I, si se especifica, realiza comparaciones de cadena que
+no distinguen entre may£sculas y min£sculas. El modificador /I tambi‚n puede
+usarse en la forma cadena1==cadena2 de IF. Estas comparaciones son gen‚ricas,
+por lo que si tanto cadena1 como cadena2 se constituyen £nicamente por d¡gitos
+num‚ricos, entonces las cadenas se convierten a n£meros y se realiza una
+comparaci¢n num‚rica.
+
+El condicional CMDEXTVERSION funciona solo como ERRORLEVEL, excepto si se
+compara con un n£mero de versi¢n interna asociada con las extensiones de
+comando. La primera versi¢n es 1. Ser  incrementada en uno cuando las
+significantes mejoras sean agregadas a las extensiones de comando. El
+condicional CMDEXTVERSION nunca es verdadero cuando las extensiones de
+comando est n deshabilitadas.
+
+El condicional DEFINED funciona solo como EXIST excepto cuando toma un
+nombre de variable de entorno y vuelve como verdadero si se define la
+variable de entorno.
+
+%ERRORLEVEL% se expandir  a una representaci¢n de cadena del valor actual
+de ERRORLEVEL, siempre y cuando no exista ya una variable de entorno con el 
+nombre ERRORLEVEL, en cuyo caso obtendr  su valor. 
+
+Despu‚s de ejecutar un programa, lo siguiente ilustrar  el uso de ERRORLEVEL
+
+    goto answer%ERRORLEVEL%
+    :answer0
+    echo El programa devolvi¢ el c¢digo 0
+    :answer1
+    echo El programa devolvi¢ el c¢digo 1
+
+Tambi‚n puede usar las comparaciones num‚ricas anteriores:
+
+    IF %ERRORLEVEL% LEQ 1 goto okay
+
+%CMDCMDLINE% se expandir  a una l¡nea de comandos original pasada al anterior
+CMD.EXE a cualquier proceso CMD.EXE, siempre y cuando no exista ya una
+variable de entorno con el nombre CMDCMDLINE, en cuyo caso obtendr  su valor.
+
+%CMDEXTVERSION% se expandir  a una representaci¢n de la cadena del valor
+actual CMDEXTVERSION, siempre y cuando no exista ya una variable de entorno
+con el nombre CMDEXTVERSION, en cuyo caso obtendr  su valor

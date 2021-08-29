@@ -1,0 +1,163 @@
+Ejecuta el comando para cada uno de los archivos especificados en el
+conjunto de archivos.
+
+FOR %variable IN (conjunto) DO comando [par metros]
+
+  %variable  Especifica un par metro reemplazable de una sola letra.
+  (conjunto)  Especifica un conjunto de uno o m s archivos.  Se pueden
+              usar comodines.
+  comando     Especifica el comando que se ejecutar  para cada archivo.
+  par metros  Especifica los par metros o modificadores del comando
+              especificado.
+
+Para usar el comando FOR en un programa por lotes, especificar
+%%variable en vez de %variable.  Los nombres de las variables
+distinguen entre may£sculas y min£sculas, por lo tanto %i no es lo
+mismo que %I.
+
+Si las extensiones de comandos est n habilitadas, se admiten las siguientes
+formas adicionales del comando FOR:
+
+FOR /D %variable IN (conjunto) comando DO [par metros]
+
+    Si el conjunto contiene comodines, se especifica para coincidir
+    con el nombre del directorio en vez de los nombres de archivo.
+
+FOR /R [[unidad:]ruta] %variable IN (set) comando DO [par metros]
+
+    Gu¡a el directorio del  rbol de ra¡z a [unidad:]ruta, ejecutando la
+    instrucci¢n FOR en cada directorio del  rbol. Si no se especifica el
+    directorio despu‚s de /R entonces se asume que es el directorio actual.
+    Si el conjunto es solamente un simple car cter de punto (.) entonces
+    enumerar  el  rbol del directorio.
+
+FOR /L %variable IN (inicio, paso, fin) comando DO [par metros]
+
+    El conjunto es una sucesi¢n de n£meros que va desde inicio hasta fin
+    y que aumenta (o disminuye) en funci¢n de lo especificado en paso.
+    As¡ (1, 1, 5) generar  la sucesi¢n 1 12 3 4 5 y (5, -1, 1) generar 
+    la sucesi¢n 5 4 3 2 1
+
+FOR /F ["opciones"] %variable IN (conjunto de archivos) comando DO
+[par metros]
+FOR /F ["opciones"] %variable IN ('cadena') comando DO [comando-par metros]
+FOR /F ["opciones"] %variable IN ('comando') comando DO [comando-par metros]
+
+    o, si la opci¢n usebackq est  presente:
+
+FOR /F ["opciones"] %variable IN (conjunto de archivos) comando DO
+       [comando-par metros]
+FOR /F ["opciones"] %variable IN ('cadena') comando DO [comando-par metros]
+FOR /F ["opciones"] %variable IN (`comando`) comando DO [comando-par metros]
+
+    Conjunto de archivos es uno o m s nombres de archivos. Cada archivo es
+    abierto, le¡do y procesado antes de ir al siguiente archivo del conjunto
+    de archivos. Procesar consiste en leer el archivo, partirlo en l¡neas
+    individuales de texto y analizar cada l¡nea en cero o m s tokens.
+    El cuerpo del bucle se llama con los valores de la variable establecidos
+    para las cadenas de token encontradas. De forma predeterminada, /F
+    pasa el primer token separado en blanco desde cada l¡nea.
+    Las l¡neas en blanco se omiten. Puede invalidar el comportamiento de
+    an lisis predeterminado si especifica el par metro opcional "opciones".
+    Esto es una cadena entre comillas que contiene una o m s palabras claves
+    para especificar diferentes opciones de an lisis. Las palabras claves son:
+
+        eol=c           - especifica un car cter de comentario
+                          al final de la l¡nea (solo uno)
+        skip=n          - especifica el n£mero de
+                          l¡neas que hay que saltarse al principio
+                          del archivo.
+        delims=xxx      - especifica un grupo de delimitadores.
+                          Esto reemplaza al grupo de delimitadores
+                          predeterminados de espacio y tabulaci¢n.
+        tokens=x,y,m-n  - especifica qu‚ token de cada l¡nea deben
+                          pasarse al cuerpo de la cl usula "for" en
+                          cada iteraci¢n.
+                          Esto causar  que los nombres de variables
+                          adicionales sean asignados.
+                          La forma m-n es un intervalo del token
+                          m-‚simo al token n-‚simo. Si el £ltimo
+                          car cter en la cadena tokens= es un asterisco,
+                          se asigna una variable adicional que recibe el
+                          resto del texto en la l¡nea posterior al £ltimo
+                          token analizado.
+        usebackq        - especifica que la nueva sem ntica est  vigente,
+                          donde una cadena entre comillas inversas se ejecuta
+                          como un comando y una cadena con comillas simples
+                          es un comando de cadena literal y permite el uso de
+                          comillas dobles para entrecomillar los nombres de
+                          archivo en un conjunto de archivos.
+
+ Estos ejemplos pueden ayudar:
+
+FOR /F "eol=; tokens=2,3* delims=, " %i in (archivo.txt) do @echo %i %j %k
+
+    analizar  cada l¡nea en mi archivo.txt excepto las que se inicien con un
+    punto y coma, pasando el segundo y tercer s¡mbolo (token) de cada l¡nea al
+    cuerpo de FOR. Los s¡mbolos est n delimitados por comas y/o espacios. Tenga
+    en cuenta que las instrucciones del cuerpo de FOR hacen referencia a %i
+    para obtener el segundo s¡mbolo, a %j para obtener el tercero y a %k para
+    obtener el resto de los s¡mbolos posteriores al tercero. Para los nombres
+    de archivo que contengan espacios, necesita poner comillas dobles
+    en los nombres de archivos. Para usar comillas dobles de esta manera,
+    tambi‚n necesita usar la opci¢n usebackq; de lo contrario se interpretar 
+    que las comillas dobles est n definiendo el an lisis de una cadena literal.
+
+    %i est  expl¡citamente declarado en la instrucci¢n FOR y %j y %k est n
+    declarados impl¡citamente a trav‚s de la opci¢n =tokens. Puede especificar
+    hasta 26 s¡mbolos a trav‚s de la l¡nea tokens=, siempre y cuando no cause
+    un intento de declarar una variable mayor que la letra 'z' o 'Z'. Recuerde,
+    los nombres de variables de FOR son de una sola letra y distinguen 
+    may£sculas de min£sculas. Adem s, las variables son globales y no puede 
+    haber m s de 52 variables activas al mismo tiempo.
+
+    Tambi‚n puede usar la l¢gica de an lisis de FOR /F en una cadena inmediata
+    convirtiendo el conjunto de archivos entre par‚ntesis en una cadena entre
+    comillas simples. Ser  tratada y analizada como una sola l¡nea de entrada
+    de un archivo.
+
+    Finalmente, puede usar el comando FOR /F para analizar la salida de un
+    comando. Se hace convirtiendo el conjunto de archivos entre par‚ntesis
+    una cadena con comillas invertidas. Se tratar  como una l¡nea de comandos
+    que se pasa a un CMD.EXE secundario y la salida se captura en memoria y
+    se eval£a como si fuera un archivo. Como en el siguiente ejemplo:
+
+    FOR /F "usebackq delims==" %i IN (`conjunto`) DO @echo %i
+
+    enumerar  los nombres de variable de entorno en el entorno actual.
+
+Adem s, la sustituci¢n de las referencias de variables FOR ha sido mejorada.
+Ahora puede usar la siguiente sintaxis opcional:
+
+    %~I         - expande %I quitando las comillas (") que pudiera haber
+    %~fI        - expande %I a un nombre de ruta calificado
+    %~dI        - expande %I solo a una letra de unidad
+    %~pI        - expande %I solo a una ruta
+    %~nI        - expande %I solo a un nombre de archivo
+    %~xI        - expande %I solo a una extensi¢n de archivo
+    %~sI        - ruta expandida contiene solo nombres cortos
+    %~aI        - expande %I a atributos de archivos
+    %~tI        - expande %I a fecha/hora del archivo
+    %~zI        - expande %I a tama¤o del archivo
+    %~$PATH:I   - busca los directorios de la lista de la variable
+                   de entorno de PATH y expande %I al nombre totalmente
+                   calificado del primero que se encuentre. Si el nombre
+                   de la variable de entorno no es definido o no se
+                   encuentra el archivo en la b£squeda, el modificador
+                   se expande a la cadena vac¡a.
+
+Los modificadores se pueden combinar para conseguir resultados compuestos:
+
+    %~dpI       - expande %I solo a una letra de unidad y ruta
+    %~nxI       - expande %I solo a un nombre de archivo y extensi¢n
+    %~fsI       - expande %I solo a un nombre de ruta con nombres cortos
+    %~dp$PATH:i - busca los directorios de la lista de la variable de
+                   entorno de PATH para %I y se expande a la letra de
+                   unidad y ruta del primero que encuentre.
+    %~ftzaI     - expande %I a DIR como l¡nea de salida.
+
+En los ejemplos anteriores %I y PATH pueden ser reemplazados por otros
+valores v lidos. La sintaxis %~ est  terminada por un nombre de variable
+FOR v lido. El c¢digo se vuelve m s legible si se usan variables en
+may£scula como %I, adem s esto evita confundir las variables con los
+modificadores, los cuales no distinguen entre may£sculas y min£sculas.
